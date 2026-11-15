@@ -1,0 +1,6 @@
+# Binary wheels; install only with .venv/bin/python -m pip.
+numpy==2.5.4
+pyproj==3.8.0
+tifffile==2026.10.15
+imagecodecs==2026.10.10
+certifi==2026.10.23

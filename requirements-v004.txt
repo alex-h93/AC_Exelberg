@@ -1,0 +1,2 @@
+# v004 texture processing (install only into .venv)
+pillow==12.3.0
