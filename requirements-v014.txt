@@ -1,0 +1,4 @@
+# v010+ scenery, v012 AI/cameras, v014 grass/textures
+scipy==1.18.1
+shapely==2.2.0
+matplotlib==3.11.2

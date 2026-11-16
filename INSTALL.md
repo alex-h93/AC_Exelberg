@@ -3,9 +3,9 @@
 ## Requirements
 
 - **Assetto Corsa** (PC, Steam). Works on Windows, and on Linux through Steam Proton.
-- About **550 MB** of free disk space for both tracks (~260 MB each).
-- *Optional:* [Custom Shaders Patch](https://acstuff.club/patch/) (CSP) for 3D grass. The
-  track also runs on the original game.
+- About **720 MB** of free disk space for both tracks (~360 MB each).
+- *Optional:* [Custom Shaders Patch](https://acstuff.club/patch/) (CSP) for extra grass across
+  the whole landscape. The track, including its verge grass, runs on the original game.
 - *Optional:* [Content Manager](https://acstuff.club/app/) for easy installation.
 
 ## 1. Download
@@ -15,8 +15,8 @@ Get the track archive from the
 OverTake.gg. It contains two track folders:
 
 ```
-exelberg_full_v011/      Königstetten → Neuwaldegg roundabout
-exelberg_reverse_v011/   Neuwaldegg roundabout → Königstetten
+exelberg_full_v014/      Königstetten → Neuwaldegg roundabout
+exelberg_reverse_v014/   Neuwaldegg roundabout → Königstetten
 ```
 
 You can install either folder or both.
@@ -36,14 +36,15 @@ Copy both folders into the game's `content/tracks` folder, so that the `.kn5` fi
 assettocorsa/
 └── content/
     └── tracks/
-        ├── exelberg_full_v011/
-        │   ├── exelberg_full_v011.kn5
-        │   ├── exelberg_v011_scenery.kn5
+        ├── exelberg_full_v014/
+        │   ├── exelberg_full_v014.kn5
+        │   ├── exelberg_v014_scenery.kn5
+        │   ├── exelberg_v014_grass.kn5
         │   ├── models.ini
         │   ├── ai/  data/  extension/  ui/
         │   └── ...
-        └── exelberg_reverse_v011/
-            ├── exelberg_reverse_v011.kn5
+        └── exelberg_reverse_v014/
+            ├── exelberg_reverse_v014.kn5
             └── ...
 ```
 
@@ -61,30 +62,34 @@ local files**, then open `content/tracks`.
 ## 3. Drive
 
 1. In Content Manager (or the original launcher), choose **Drive → Practice**.
-2. Choose the track **Exelberg Full v011** or **Exelberg Reverse v011**.
-3. Pick any road car and start the session. **Solo only**: there is one pit box and no AI.
+2. Choose the track **Exelberg Full v014** or **Exelberg Reverse v014**.
+3. Pick any road car and start the session. **Solo only**: there is one pit box, so no AI
+   opponents. The ideal line (driving assist) works.
 4. Each run is timed from the start gate to the finish gate. The time is shown as a lap time.
 5. After the finish, brake: the road ends at an invisible wall after the run-off
    (about 100 m on the forward track, about 110 m on the reverse track).
 
 To start a new run, use **Restart session** or teleport back to the pits.
 
+In replays, press **F3** to switch between the three TV camera sets.
+
 ## Updating from an older version
 
-Each version has its own folder, for example `exelberg_full_v010`. Older versions can stay
+Each version has its own folder, for example `exelberg_full_v013`. Older versions can stay
 installed next to the new ones, or you can delete their folders from `content/tracks`.
 
 ## Uninstall
 
-Delete the folders `exelberg_full_v011` and `exelberg_reverse_v011` from `content/tracks`.
+Delete the folders `exelberg_full_v014` and `exelberg_reverse_v014` from `content/tracks`.
 
 ## Troubleshooting
 
 | Problem | Fix |
 | --- | --- |
-| **"Track not found"** or the track is missing from the list | The folder is nested one level too deep (e.g. `tracks/exelberg_full_v011/exelberg_full_v011/`). Move it up so that the `.kn5` files are directly inside `tracks/exelberg_full_v011/`. |
-| Grass looks flat or missing | 3D grass needs Custom Shaders Patch. Without it, the ground is textured but flat. |
-| Low frame rate | Lower *World detail* and *Shadow resolution* in the video settings. The track has many trees and buildings. |
+| **"Track not found"** or the track is missing from the list | The folder is nested one level too deep (e.g. `tracks/exelberg_full_v014/exelberg_full_v014/`). Move it up so that the `.kn5` files are directly inside `tracks/exelberg_full_v014/`. |
+| Grass clumps missing next to the road | Check that `exelberg_v014_grass.kn5` (or `exelberg_reverse_v014_grass.kn5`) is in the track folder. Clumps are only drawn within about 75 m of the camera. |
+| First load hangs on the loading screen | Close the game and start it again. This happened once right after installing and could not be reproduced. |
+| Low frame rate | Lower *World detail* and *Shadow resolution* in the video settings. The track has many trees, buildings and grass clumps. |
 | No lap time after the finish | Drive through the start gate from the spawn. A run counts only when you cross both gates in the right direction. |
 
 ## Building from source
