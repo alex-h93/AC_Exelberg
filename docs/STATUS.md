@@ -1,6 +1,60 @@
+v014 load test: user "the track does not load - it does not leave the loading screen". log.txt: all 3 KN5s, AI and physics load
+(init3D 0.58 s), log cut mid-line while loading pit crew objects (unflushed, game closed). Diagnostic split installed:
+exelberg_full_v014a = v013 + grass KN5 only, exelberg_full_v014b = v013 + v014 materials/textures only (build/diag_v014). Result: user "now all version work, the 14a, 14b and the full 14 in both directions"; last log = v014 full, loaded, CLEAN EXIT. First hang not reproduced, cause unknown (one-off). Test tracks v014a/v014b removed from the game afterwards (user OK).
+
+v014 (INSTALLED both tracks, v012 removed from the game; NOT runtime-tested) = v013 + textures + 3D verge grass. User: "nicer textures for the gras
+next to the road ... absolute flat" and "alternative textures for the road ... more realistic"; user runs plain AC on
+Linux (no CSP/Content Manager), so only vanilla Kunos shaders are used (slot/property names taken from imola/Trento).
+- `acquire_cc0_textures_v014.py` -> data/raw/textures_cc0_v014 (ambientCG CC0, 145.6 MB, sha256 ledger): Asphalt015,
+  Asphalt023S, Asphalt031, Road006 (candidates; Asphalt015 chosen), Foliage002/006/008 (grass sprites).
+- `v014_textures.py` -> data/processed/textures_v014: DXT1/DXT5 DDS with full mip chains (Pillow per level).
+- `kn5_header.py`: KN5 v5 texture/material header rewrite, node section copied byte-for-byte (exact round trip).
+- `v014_materials.py`: V002_asphalt / V002_gravel / 27 ortho ground materials (main) and V011_asphalt / V011_gravel
+  (scenery) -> ksPerPixelMultiMap_NMDetail. Road/gravel UVs are world-planar 6 m (main) / 4 m (scenery) per unit;
+  asphalt 6 m tile + 60 m wear/patch/crack-seal detail; ground detail 5 m tile + grass normal detail (blend 1.0).
+  Detail-alpha semantics (diffuse alpha 0 = full detail) carried over from v004, still unverified in-game.
+- `v014_grass.py` + `build_grass_v014.py` -> third KN5 `<..>_v014_grass.kn5` (MODEL_2): ~95k alpha-tested clumps per
+  track (2 crossed double-sided quads), 3.4-9.5 m from the centreline, only on skin role GRASS (and 0.25 m inward),
+  not on scenery junction/building footprints; 50 m chunks, lod_out 75 m, no shadows; ~760k tris, 44 MB.
+- `package_full_track_v014.py` (19 files, ~358 MB per track; main/scenery node sections asserted identical),
+  `install_full_track_v014.py`, `tests/test_v014.py` (also covers the v013 sign clearance).
+Runtime unknowns: grass/LOD performance, how bright/contrasty the new detail layers look in AC lighting.
+
+v013 (built, NOT installed): user "missplaced traffic sign on the road at the roundabout ... after turning right in the
+first exit". Cause: v011_urban offsets signs from OSM carriageway centres (half width 2.25 m + 0.8 m); our 6 m road covers
+part of the Exelbergstrasse splitter island, so island-side signs stood on the asphalt (reverse: entry-zebra sign 1.31 m
+from the centreline; forward: exit-zebra sign 2.20 m). Fix `scripts/v013_scenery.py`: urban signs closer than 3.95 m are
+pushed perpendicular out to 3.95 m (7 per track; geometry otherwise identical to v011, same tris). `build_scenery_v013.py`,
+`package_full_track_v013.py` (= v012 + new scenery KN5), `install_full_track_v013.py`. Plot:
+scratchpad signs_v013.png. No CSP found in the user's game folder (GrassFX in ext_config.ini is inactive).
+
 # Current project status
 
-## Latest: v011 — forward exelberg_full_v011 + NEW reverse track exelberg_reverse_v011, INSTALLED 2026-11-15 (user-authorized) — NOT yet game-tested
+## Latest: v012 — AI line + TV/replay cameras (exelberg_full_v012, exelberg_reverse_v012), INSTALLED 2026-11-15 (user-authorized) — NOT yet game-tested
+
+v012 test: user "the ai line was off most of the time". Cause: the line sat exactly ON the asphalt (0.00 m); Kunos lines
+sit 0.30 m (magione) / 0.38 m (trento-bondone) above the road, so the ideal line drawn from it was hidden by the road
+surface. Fix: AI_LIFT 0.35 m (verified 0.350 m above every sampled road triangle); packages rebuilt; corrected fast_lane.ai
+installed in both v012 folders (all files match the manifests).
+
+Game folder cleanup (user request, 2026-11-15): all older Exelberg tracks (exelberg_full_v002-v011, exelberg_north_proto_v001,
+exelberg_reverse_v011) removed from content/tracks; only the two v012 tracks remain installed. Old packages stay in build/.
+
+User (v011 review): "test was good"; asked for TV-broadcast camera angles and an AI line.
+- `scripts/v012_ai_cameras.py forward|reverse`: `ai/fast_lane.ai` from the road centreline (1.5 m points, driving order,
+  version-7 layout incl. the 10 m nearest-point grid; format checked by re-parsing Kunos magione/trento-bondone/ks_drag
+  files to their exact sizes). Speed profile 8 m/s^2 lateral, 3.5 accel, 7 braking, 45 m/s cap; centreline, not a
+  racing line. Three camera sets (data/cameras.ini TV 1 broadcast 8-18 m off / 2.5-4.5 m high; cameras_1.ini TV 2 low
+  trackside 6.5 m / 1-1.6 m; cameras_2.ini TV 3 high 20-35 m), contiguous IN/OUT 0..1, chosen greedily with line of
+  sight against the ground skin, placed trees (crowns + max 12 m of forest below the canopy) and OSM buildings.
+  Forward: 54 / 101 / 46 cameras; reverse: 54 / 100 / 45. No fallback holds.
+- `scripts/package_full_track_v012.py`: v011 package + main KN5 renamed (root node patched, same length), models.ini,
+  ui, README; scenery KN5 byte-identical. 18 files, ~293 MB each. Spawn 1.58 m beside the AI line at 10.5 m, heading
+  dot 0.998. `scripts/install_full_track_v012.py forward|reverse [--install]` (dry-run default). Tests: 383 OK.
+- Runtime unknowns: whether AC accepts the generated grid/extras (check log.txt), camera switching points, AI driving
+  quality on the centreline. Guide: docs/FULL_TRACK_V012_TEST_GUIDE.md.
+
+## v011 — forward exelberg_full_v011 + NEW reverse track exelberg_reverse_v011, INSTALLED 2026-11-15 (user-authorized) — NOT yet game-tested
 
 User (v010 review): "test was good". Requests: (1) second track in the other direction, start where the screenshot
 data/raw/Marswiese_start.png was taken, signs/crosswalks/green island as in the screenshots, 1st exit with a "Tulln"
